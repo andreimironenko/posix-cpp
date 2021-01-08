@@ -41,11 +41,12 @@ if read_the_docs_build:
 
 # -- Project information -----------------------------------------------------
 
-project = 'posix-cpp-timer'
-copyright = '2021, Andrei Mironenko'
-author = 'Andrei Mironenko'
+project = u'posixcpptimer'
+copyright = u'2021, Andrei Mironenko'
+author = u'Andrei Mironenko'
 master_doc = "index"
-
+primary_domain = 'cpp'
+breathe_domain_by_extension = {"h": "cpp"}
 
 # -- General configuration ---------------------------------------------------
 

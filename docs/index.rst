@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Posix C++17 timer wrapper library documentation!
+Welcome to Posix C++17 timer wrapper library documentation
 ===========================================================
 
 .. toctree::
@@ -16,5 +16,6 @@ Docs
 ====
 
 .. doxygenclass:: timer 
-   :project: posixcpptimer
    :members:
+   :private-members:
+   :undoc-members:
