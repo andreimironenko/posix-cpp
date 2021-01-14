@@ -23,7 +23,7 @@ def configureDoxyfile(input_dir, output_dir):
 
 	filedata = filedata.replace('@DOXYGEN_INPUT_DIR@', input_dir)
 	filedata = filedata.replace('@DOXYGEN_OUTPUT_DIR@', output_dir)
-	
+
 	with open('Doxyfile', 'w') as file:
 		file.write(filedata)
 
@@ -101,7 +101,11 @@ breathe_default_project = "posixcpptimer"
 # would mean that specific document would be compressed
 # regardless of the global 'pdf_compressed' setting.
 
-pdf_documents = [ ('index', 'posixcpptimer', 'posixcpptimer', 'Andrei Mironenko')]
+pdf_documents = [ ('index', 
+                   'posixcpptimer', 
+                   'Posix C++17 timer wrapper library', 
+                   'Andrei Mironenko')
+                 ]
 
 # A comma-separated list of custom stylesheets. Example:
 pdf_stylesheets = ['sphinx', 'kerning', 'a4']
@@ -109,6 +113,8 @@ pdf_stylesheets = ['sphinx', 'kerning', 'a4']
 # A list of folders to search for stylesheets. Example:
 pdf_style_path = ['.', '_styles']
 
+pdf_header = "section ###Section### ###SectNum###"
+pdf_footer = "Page ###Page###"
 
 # Create a compressed PDF
 # Use True/False or 1/0
@@ -136,7 +142,7 @@ pdf_style_path = ['.', '_styles']
 
 # Insert footnotes where they are defined instead of
 # at the end.
-# pdf_inline_footnotes = True
+pdf_inline_footnotes = True
 
 # verbosity level. 0 1 or 2
 # pdf_verbosity = 0
@@ -148,10 +154,10 @@ pdf_style_path = ['.', '_styles']
 # pdf_use_modindex = True
 
 # If false, no coverpage is generated.
-# pdf_use_coverpage = True
+pdf_use_coverpage = True
 
 # Name of the cover page template to use
-# pdf_cover_template = 'sphinxcover.tmpl'
+pdf_cover_template = 'sphinxcover.tmpl'
 
 # Documents to append as an appendix to all manuals.
 # pdf_appendices = []
@@ -167,7 +173,7 @@ pdf_style_path = ['.', '_styles']
 # pdf_extensions = []
 
 # Page template name for "regular" pages
-# pdf_page_template = 'cutePage'
+pdf_page_template = 'cutePage'
 
 # Show Table Of Contents at the beginning?
 # pdf_use_toc = True
