@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(posixcpptimer)
+project(posixcpp)
 
 set(CMAKE_CXX_STANDARD 17)
 set(BUILD_SHARED_LIBS YES)
@@ -8,18 +8,15 @@ set(BUILD_SHARED_LIBS YES)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})  
 
 include_directories(include)
-include_directories(src)
+include_directories(timer)
 
+add_subdirectory(timer)
 add_subdirectory(tests)
 add_subdirectory(docs)
 
-add_library(${CMAKE_PROJECT_NAME} SHARED
-  src/timer.cpp
-  include/timer.h
-  src/timer_.cpp
-  src/timer_.h
-  )
-
-target_link_libraries(${CMAKE_PROJECT_NAME} rt)
+add_dependencies(timer-test ${CMAKE_PROJECT_NAME}-timer gtest gtest_main)
+add_dependencies(Doxygen ${CMAKE_PROJECT_NAME}-timer)
+add_dependencies(Sphinx Doxygen ${CMAKE_PROJECT_NAME}-timer)
+add_dependencies(pdf Sphinx Doxygen ${CMAKE_PROJECT_NAME}-timer)
 
 

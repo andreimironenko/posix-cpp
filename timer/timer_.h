@@ -9,7 +9,8 @@
 #include "timer.h"
 
 #pragma once
-
+namespace posixcpp 
+{
   class timer::timer_
   {
     std::chrono::duration<long, std::nano> _period;
@@ -43,3 +44,4 @@
     void resume();
     void stop();
   };
+} //namespace posixcpp

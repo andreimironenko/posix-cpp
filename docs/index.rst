@@ -122,7 +122,7 @@ True   True   True
 Class timer API
 =============================================================================
 
-.. doxygenclass:: timer
+.. doxygenclass:: posixcpp::timer
    :members:
    :private-members:
    :undoc-members:
