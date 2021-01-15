@@ -1,2 +1,4 @@
-# posix-timer-cpp
-C++17 wrapper for Posix C-library timer
+# posix-cpp
+C++17 wrapper for POSIX C-library includes:
+
+* POSIX Interval Timers;
