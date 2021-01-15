@@ -1,11 +1,11 @@
 #include "timer.h"
 #include "timer_.h"
 
-namespace posixcpp 
+namespace posixcpp
 {
-  timer::timer(std::chrono::duration<long, std::nano> period_nsec,
+  timer::timer(std::chrono::seconds period_sec, std::chrono::nanoseconds period_nsec,
       callback_t callback, void* data, bool is_single_shot, int sig) :
-    _timer(new timer_(period_nsec, callback, data, is_single_shot, sig))
+    _timer(new timer_(period_sec, period_nsec, callback, data, is_single_shot, sig))
   {
   }
 

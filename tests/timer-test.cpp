@@ -52,11 +52,13 @@ class TimerTest: public ::testing::Test {
 TEST_F(TimerTest, CreatingNew)
 {
   EXPECT_TRUE(true);
-  duration<long> period_s(5s);
+  std::chrono::seconds period_sec = 5s;
+  std::chrono::nanoseconds period_nsec = 0ns;
 
   std::unique_ptr<timer> tm (
       new timer(
-        period_s,
+        period_sec,
+        period_nsec,
         std::bind(&TimerTest::increment_tick, this, std::placeholders::_1), // callback
        (void*) &_tick )                                                     // pointer to data
       );
@@ -65,13 +67,13 @@ TEST_F(TimerTest, CreatingNew)
   int max_ticks = 5;
   for(int i = 0; i < max_ticks; i++)
   {
-    sleep(period_s.count());
+    sleep(period_sec.count());
     EXPECT_EQ(_tick, i+1);
     cout << "tick: " << _tick << endl;
   }
 
   tm->stop();
-  sleep(period_s.count());
+  sleep(period_sec.count());
 
   EXPECT_EQ(_tick, max_ticks);
 }
@@ -79,11 +81,13 @@ TEST_F(TimerTest, CreatingNew)
 TEST_F(TimerTest, SuspendResume)
 {
   EXPECT_TRUE(true);
-  duration<long> period_s(5s);
+  std::chrono::seconds period_sec = 5s;
+  std::chrono::nanoseconds period_nsec = 0ns;
 
   std::unique_ptr<timer> tm (
       new timer(
-        period_s,
+        period_sec,
+        period_nsec,
         std::bind(&TimerTest::increment_tick, this, std::placeholders::_1), // callback
         (void*) &_tick,                                                     // pointer to data
         true
