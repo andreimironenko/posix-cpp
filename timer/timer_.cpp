@@ -6,25 +6,30 @@
 
 #include "timer_.h"
 
-namespace posixcpp 
-{ 
+namespace posixcpp
+{
 
   void timer::timer_::signal_handler(int sig, siginfo_t *si, void *uc)
   {
+
+    syslog(LOG_INFO, "timer_::signal_handler+");
     auto tm = static_cast<timer_*>(si->si_value.sival_ptr);
     if (tm && sig == tm->_signal)
     {
-      syslog(LOG_INFO, "timer_::signal_handler with period_nsec = %ld has expired", tm->_period.count());
+      syslog(LOG_INFO, "timer_::signal_handler with preiod_sec = %ld and period_nsec = %ld has expired",
+          tm->_period_sec.count(), tm->_period_nsec.count());
       syslog(LOG_INFO, "timer_::signal_handler timer->data = 0x%0x", (unsigned long) tm->_data);
       tm->_callback(tm->_data);
     }
+    syslog(LOG_INFO, "timer_::signal_handler-");
   }
 
-  timer::timer_::timer_(std::chrono::duration<long, std::nano> period_nsec,
+  timer::timer_::timer_(std::chrono::seconds period_sec, std::chrono::nanoseconds period_nsec,
       callback_t callback, void* data,
       bool is_single_shot, int sig
       ):
-    _period(period_nsec),
+    _period_sec(period_sec),
+    _period_nsec(period_nsec),
     _callback(callback),
     _data(data),
     _is_single_shot(is_single_shot),
@@ -47,19 +52,6 @@ namespace posixcpp
     _sev.sigev_signo = sig;               /* Notify using this signal*/
     _sev.sigev_value.sival_ptr = this;
 
-    _ts.it_value.tv_sec = _period.count() / 1'000'000'000;
-    _ts.it_value.tv_nsec = _period.count() % 1'000'000'000;
-
-    syslog(LOG_INFO, "it_value.tv_sec = %ld", _ts.it_value.tv_sec);
-    syslog(LOG_INFO, "it_value.tv_nsec = %ld", _ts.it_value.tv_nsec);
-
-    if (!_is_single_shot) {
-      _ts.it_interval.tv_sec = _ts.it_value.tv_sec;
-      _ts.it_interval.tv_nsec = _ts.it_value.tv_nsec;
-      syslog(LOG_INFO, "it_interval.tv_sec = %ld", _ts.it_interval.tv_sec);
-      syslog(LOG_INFO, "it_interval.tv_nsec = %ld", _ts.it_interval.tv_nsec);
-    }
-
     /* Allows handler to get ID of this timer */
     if (timer_create(CLOCK_REALTIME, &_sev, &_timer) != 0)
     {
@@ -80,7 +72,8 @@ namespace posixcpp
   {
     struct itimerspec ts;
 
-    syslog(LOG_INFO, "starting timer with period_nsec = %ld", _period.count());
+    syslog(LOG_INFO, "starting timer with period_sec = %ld, period_nsec = %ld",
+        _period_sec.count(), _period_nsec.count());
 
     //get current time from timer
     if (timer_gettime(_timer, &ts) != 0)
@@ -94,19 +87,8 @@ namespace posixcpp
       return;
     }
 
-    // oethrwise set to the defined value
-    if (timer_settime(_timer, 0, &_ts, NULL) != 0)
-    {
-      throw std::runtime_error("Failed to start timer");
-    }
-
-    syslog(LOG_INFO, "timer with period_nsec started = %ld", _period.count());
-  }
-
-  void timer::timer_::reset()
-  {
-    _ts.it_value.tv_sec = _period.count() / 1'000'000'000;
-    _ts.it_value.tv_nsec = _period.count() % 1'000'000'000;
+    _ts.it_value.tv_sec = _period_sec.count();
+    _ts.it_value.tv_nsec = _period_nsec.count();
 
     if (!_is_single_shot) {
       _ts.it_interval.tv_sec = _ts.it_value.tv_sec;
@@ -118,6 +100,15 @@ namespace posixcpp
     {
       throw std::runtime_error("Failed to start timer");
     }
+
+    syslog(LOG_INFO, "timer started with preiod_sec = %ld, period_nsec = %ld",
+        _period_sec.count(), _period_nsec.count());
+  }
+
+  void timer::timer_::reset()
+  {
+    stop();
+    start();
   }
 
   void timer::timer_::suspend()

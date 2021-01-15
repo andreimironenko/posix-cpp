@@ -6,7 +6,6 @@
 #include <functional>
 
 #pragma once
-
 namespace posixcpp {
   class timer {
     class timer_;
@@ -15,7 +14,8 @@ namespace posixcpp {
     public:
     using callback_t = std::function<void(void*)>;
 
-    explicit timer(std::chrono::duration<long, std::nano> period_nsec,
+    explicit timer(std::chrono::seconds period_sec,
+        std::chrono::nanoseconds period_nsec = static_cast<std::chrono::seconds>(0),
         callback_t callback = nullptr, void* data = nullptr,
         bool is_single_shot = false, int sig = SIGRTMAX
         );

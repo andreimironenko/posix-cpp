@@ -9,11 +9,12 @@
 #include "timer.h"
 
 #pragma once
-namespace posixcpp 
+namespace posixcpp
 {
   class timer::timer_
   {
-    std::chrono::duration<long, std::nano> _period;
+    std::chrono::seconds _period_sec;
+    std::chrono::nanoseconds _period_nsec;
     callback_t _callback;
     void* _data;
     bool _is_single_shot;
@@ -28,7 +29,8 @@ namespace posixcpp
     public:
     static void signal_handler(int sig, siginfo_t *si, void *uc = nullptr);
 
-    explicit timer_(std::chrono::duration<long, std::nano> period_nsec, callback_t callback, void* data,
+    explicit timer_(std::chrono::seconds period_sec, std::chrono::nanoseconds period_nsec,
+        callback_t callback, void* data,
         bool is_single_short, int sig);
 
     ~timer_();

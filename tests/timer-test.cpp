@@ -40,7 +40,6 @@ class TimerTest: public ::testing::Test {
     void increment_tick(void* tick)
     {
       EXPECT_EQ((long)tick, (long)&_tick);
-      //_tick ++;
       (*((int*)tick))++;
     }
 
@@ -49,14 +48,16 @@ class TimerTest: public ::testing::Test {
     }
 };
 
-TEST_F(TimerTest, CreatingNew)
+TEST_F(TimerTest, GetTimeOut)
 {
   EXPECT_TRUE(true);
-  duration<long> period_s(5s);
+  std::chrono::seconds period_sec = 5s;
+  std::chrono::nanoseconds period_nsec = 0ns;
 
   std::unique_ptr<timer> tm (
       new timer(
-        period_s,
+        period_sec,
+        period_nsec,
         std::bind(&TimerTest::increment_tick, this, std::placeholders::_1), // callback
        (void*) &_tick )                                                     // pointer to data
       );
@@ -65,13 +66,13 @@ TEST_F(TimerTest, CreatingNew)
   int max_ticks = 5;
   for(int i = 0; i < max_ticks; i++)
   {
-    sleep(period_s.count());
+    sleep(period_sec.count());
     EXPECT_EQ(_tick, i+1);
     cout << "tick: " << _tick << endl;
   }
 
-  tm->stop();
-  sleep(period_s.count());
+  //tm->stop();
+  //sleep(period_sec.count());
 
   EXPECT_EQ(_tick, max_ticks);
 }
@@ -79,11 +80,13 @@ TEST_F(TimerTest, CreatingNew)
 TEST_F(TimerTest, SuspendResume)
 {
   EXPECT_TRUE(true);
-  duration<long> period_s(5s);
+  std::chrono::seconds period_sec = 5s;
+  std::chrono::nanoseconds period_nsec = 0ns;
 
   std::unique_ptr<timer> tm (
       new timer(
-        period_s,
+        period_sec,
+        period_nsec,
         std::bind(&TimerTest::increment_tick, this, std::placeholders::_1), // callback
         (void*) &_tick,                                                     // pointer to data
         true
@@ -102,6 +105,73 @@ TEST_F(TimerTest, SuspendResume)
 
   sleep(4);
 
+  EXPECT_EQ(_tick, 1);
+}
+
+TEST_F(TimerTest, StopStart)
+{
+  EXPECT_TRUE(true);
+  std::chrono::seconds period_sec = 5s;
+  std::chrono::nanoseconds period_nsec = 0ns;
+
+  // create a new timer object with timeout of 5s
+  std::unique_ptr<timer> tm (
+      new timer(
+        period_sec,
+        period_nsec,
+        std::bind(&TimerTest::increment_tick, this, std::placeholders::_1), // callback
+       (void*) &_tick )                                                     // pointer to data
+      );
+  // start the timer
+  tm->start();
+
+  // wait for 2s
+  sleep(period_sec.count()/2);
+
+  // stop the time, it should reset the timer as well
+  tm->stop();
+
+  // make sure that the timer is not running
+  // let's wait for another 4 seconds for the time out
+  // and check the _tick counter is not incremented
+  sleep(period_sec.count()/2 + period_sec.count()%2);
+  EXPECT_EQ(_tick, 0);
+
+  // lets start timer again
+  tm->start();
+
+  // wait until time-out
+  sleep(period_sec.count() + 1);
+  // and make sure that _tick is incremented now
+  EXPECT_EQ(_tick, 1);
+}
+
+TEST_F(TimerTest, Reset)
+{
+  EXPECT_TRUE(true);
+  std::chrono::seconds period_sec = 5s;
+  std::chrono::nanoseconds period_nsec = 0ns;
+
+  // create a new timer object with timeout of 5s
+  std::unique_ptr<timer> tm (
+      new timer(
+        period_sec,
+        period_nsec,
+        std::bind(&TimerTest::increment_tick, this, std::placeholders::_1), // callback
+       (void*) &_tick )                                                     // pointer to data
+      );
+  // start the timer
+  tm->start();
+
+  // wait for 2s
+  sleep(period_sec.count()/2);
+
+  // reset timer, means stop() and start()
+  tm->reset();
+
+  // wait until time-out
+  sleep(period_sec.count() + 1);
+  // and make sure that _tick is incremented now
   EXPECT_EQ(_tick, 1);
 }
 
