@@ -71,8 +71,8 @@ TEST_F(TimerTest, GetTimeOut)
     cout << "tick: " << _tick << endl;
   }
 
-  //tm->stop();
-  //sleep(period_sec.count());
+  tm->stop();
+  sleep(period_sec.count());
 
   EXPECT_EQ(_tick, max_ticks);
 }
