@@ -1,3 +1,7 @@
+/* STL C++ headers */
+#include <stdexcept>
+
+/* Local headers */
 #include "timer.h"
 #include "timer_.h"
 
@@ -37,5 +41,30 @@ namespace posixcpp
   void timer::stop()
   {
     _timer->stop();
+  }
+
+  std::error_code timer::try_start() noexcept
+  {
+    return _timer->try_start();
+  }
+
+  std::error_code timer::try_reset() noexcept
+  {
+    return _timer->try_reset();
+  }
+
+  std::error_code timer::try_suspend() noexcept
+  {
+    return _timer->try_suspend();
+  }
+
+  std::error_code timer::try_resume() noexcept
+  {
+    return _timer->try_resume();
+  }
+
+  std::error_code timer::try_stop() noexcept
+  {
+    return _timer->try_stop();
   }
 } //namespace posixcpp

@@ -1,14 +1,19 @@
+#pragma once
+
+/* STL C++ headers */
 #include <map>
 #include <memory>
 #include <ratio>
 #include <chrono>
 #include <ctime>
+#include <system_error>
 
+/* Linux system headers */
 #include <syslog.h>
 
+/* Local headers */
 #include "timer.h"
 
-#pragma once
 namespace posixcpp
 {
   class timer::timer_
@@ -45,5 +50,11 @@ namespace posixcpp
     void suspend();
     void resume();
     void stop();
+
+    std::error_code try_start() noexcept;
+    std::error_code try_reset() noexcept;
+    std::error_code try_suspend() noexcept;
+    std::error_code try_resume() noexcept;
+    std::error_code try_stop() noexcept;
   };
 } //namespace posixcpp
