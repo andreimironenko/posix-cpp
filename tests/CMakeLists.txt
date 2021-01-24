@@ -43,4 +43,4 @@ include_directories(${json_SOURCE_DIR}/include)
 
 add_executable(timer-test timer-test.cpp)
 target_link_libraries(timer-test gtest gtest_main)
-target_link_libraries(timer-test rt posixcpp-timer)
+target_link_libraries(timer-test rt posixcpp_timer)

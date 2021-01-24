@@ -13,10 +13,11 @@ include_directories(timer)
 add_subdirectory(timer)
 add_subdirectory(tests)
 add_subdirectory(docs)
+#add_subdirectory(python)
 
-add_dependencies(timer-test ${CMAKE_PROJECT_NAME}-timer gtest gtest_main)
-add_dependencies(Doxygen ${CMAKE_PROJECT_NAME}-timer)
-add_dependencies(Sphinx Doxygen ${CMAKE_PROJECT_NAME}-timer)
-add_dependencies(pdf Sphinx Doxygen ${CMAKE_PROJECT_NAME}-timer)
+add_dependencies(timer-test ${CMAKE_PROJECT_NAME}_timer gtest gtest_main)
+add_dependencies(Doxygen ${CMAKE_PROJECT_NAME}_timer)
+add_dependencies(Sphinx Doxygen ${CMAKE_PROJECT_NAME}_timer)
+add_dependencies(pdf Sphinx Doxygen ${CMAKE_PROJECT_NAME}_timer)
 
 

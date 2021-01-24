@@ -10,8 +10,7 @@ namespace posixcpp
   timer::timer(std::chrono::seconds period_sec, std::chrono::nanoseconds period_nsec,
       callback_t callback, void* data, bool is_single_shot, int sig) :
     _timer(new timer_(period_sec, period_nsec, callback, data, is_single_shot, sig))
-  {
-  }
+  {}
 
   timer::~timer()
   {
@@ -67,4 +66,5 @@ namespace posixcpp
   {
     return _timer->try_stop();
   }
+
 } //namespace posixcpp
