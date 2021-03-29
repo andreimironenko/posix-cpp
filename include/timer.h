@@ -49,13 +49,13 @@ namespace posixcpp {
     };
 
     /**
-     * struct timer::error_category child  of st::error_category
-     * It overrides and implements name and message which implements.
+     * The struct timer::error_category child  of std::error_category
+     * It overrides and implements name and message functions.
      */
     struct error_category : std::error_category
     {
       /**
-       * Overriden method return domain name for the given error_category struct
+       * Overridden method return domain name for the given error_category struct
        *
        * @return  always return const char pointer to the name string
        */
@@ -65,7 +65,7 @@ namespace posixcpp {
       }
 
       /**
-       * Overriden method return error mesage string for the given error from timer::error enum
+       * Overridden method return error message string for the given error from timer::error enum
        */
       std::string message(int err) const override
       {
@@ -93,6 +93,12 @@ namespace posixcpp {
         return err2str[err];
       }
 
+
+      /**
+       * The factory singleton class timer::error_category method.
+       * If instance object does not exist, it's created. C++17 singleton pattern is used.
+       * @return Always returns the same timer::error_category object reference.
+       */
       static error_category& instance()
       {
         static error_category instance;
@@ -100,6 +106,37 @@ namespace posixcpp {
       }
     }; // struct error_category
 
+
+    /**
+     * @brief The explicit timer constructor.
+     * The only mandatory parameter is period_sec, other parameters are optional and have default values.
+     * The timeout period is defined by two parameters *period_sec* and *period_nsec*
+     *  total_period = period_sec * 10^9 + period_nsec  nanoseconds
+     * By default period_nsec = 0 and the user callback function is nullptr, but there is little sense to start a timer
+     * without feedback to user.
+     * I suggest provide at least these three parameters *period_sec*, *period_nsec* and your
+     * *callback* function.
+     *
+     * To distinguish between callback function invocations, you might want to provide pointer to customisable data.
+     * The pointer is passed as parameter to the customer *callback* function.
+     * If *is_single_shot* parameters set to true, then the timer will run only once, by default it runs multiply
+     * times until the timer
+     *
+     * @sa timer::suspend,  timer::stop.
+     *
+     * The last parameter *sig* specified signal can be used by POSIX library when the timer expires. By default it's
+     * **SIGRTMAX**.
+     *
+     * @param period_sec      First part of timeout period in seconds, use literal 's' for std::chrono::seconds.
+     * @param period_nsec     Second part of timeout period in nanoseconds, use literal 'ns' for
+     *                        std::chrono::nanoseconds.
+     * @param callback        User specified callback function, which is called when timer expires.
+     * @param data            User specified pointer to the user data. This pointer is passed as argument to the
+     *                        callback function.
+     * @param is_single_shot  If this argument is true, then timer runs only once 
+     * @param sig             It sets up the signal used by POSIX library, this signal is risen in the context of user
+     *                        process.
+     */
     explicit timer(std::chrono::seconds period_sec,
         std::chrono::nanoseconds period_nsec = static_cast<std::chrono::seconds>(0),
         callback_t callback = nullptr, void* data = nullptr,
@@ -115,8 +152,17 @@ namespace posixcpp {
 
     void start();
     void reset();
+
+    /**
+     * suspend function
+     */
     void suspend();
+
     void resume();
+
+    /**
+     * stop function
+     */
     void stop();
 
     std::error_code try_start() noexcept;
